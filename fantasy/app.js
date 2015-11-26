@@ -1,19 +1,16 @@
 var express = require('express');
 var app = express();
-var cheerio = require('cheerio');
-var jquery = require('jquery');
-var fs = require('fs');
+var scraper = require('./scripts/scraper')
+var csvConverter = require('./scripts/csvConverter')
+
 
 app.use(express.static('public'));
 app.get('/', function (req, res){
-   res.sendFile(__dirname + '/views/index.html'); 
+   res.sendFile(__dirname + '/views/graphs.html'); 
 });
-app.get('/history', function(req, res){
-    var file = fs.readFileSync(__dirname + '/public/history.html', {"encoding": "UTF-8"});
-    console.log(file);
-    var html = cheerio.load(file);
-    
-    res.json({"hello": "world"})
-});
+
+app.get('/history', scraper);
+app.get('/transactions.csv', csvConverter);
+
 
 var server = app.listen(3000);
