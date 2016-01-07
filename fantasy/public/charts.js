@@ -1,6 +1,5 @@
 (function(){
 
-    $('.chartcontent').text('hello world');
     google.load('visualization', '1', {'packages': ['corechart']});
 
     // Set a callback to run when the Google Visualization API is loaded.

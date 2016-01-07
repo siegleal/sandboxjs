@@ -3,7 +3,31 @@ module.exports = function(req, res){
 	var cheerio = require('cheerio');
 	var jquery = require('jquery');
 	var fs = require('fs');
-	
+
+    var url = 'mongodb://localhost:27017/fantasy';
+    var mongoose = require('mongoose');
+    var utils = require('./mongooseutil');
+    mongoose.connect(url);
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+
+    var Transaction = mongoose.model('Transaction', utils.schemas.transactionSchema);
+    Transaction.find(function(err, transactions) {
+        if (err) return console.error(err);
+        console.log(transactions.length + " records found in db");
+        if (transactions.length > 0){
+            console.log('Returning transaction results from db');
+            res.json({"transactions": transactions});
+
+        }else{
+            console.log('Performing scraping');
+            scrape();
+        };
+        
+    });
+
+    var scrape = function(){
+
 	var weeks = [
 		new Date("15 Sep 2015 00:00:00"),
 		new Date("22 Sep 2015 00:00:00"),
@@ -20,6 +44,8 @@ module.exports = function(req, res){
 		new Date("08 Dec 2015 00:00:00"),
 		new Date("15 Dec 2015 00:00:00"),
 		new Date("22 Dec 2015 00:00:00"),
+		new Date("29 Dec 2015 00:00:00"),
+		new Date("05 Jan 2016 00:00:00"),
 	];
 	
 	var safeMatch = function(str, reg){
@@ -121,11 +147,17 @@ module.exports = function(req, res){
 
             transactions[j].date = data;
             result.push(transactions[j]);
+            var trans = new Transaction(transactions[j]);
+            trans.save(function(err, trans){
+                if (err) return console.error(err);
+            });
         }
     });
 
     result.sort(function(a, b) {return a.date.date - b.date.date;});
 
     res.json({"transactions": result});
+
+    };
 	
 }

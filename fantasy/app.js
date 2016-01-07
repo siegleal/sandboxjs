@@ -3,7 +3,6 @@ var app = express();
 var scraper = require('./scripts/scraper')
 var csvConverter = require('./scripts/csvConverter')
 
-
 app.use(express.static('public'));
 app.get('/', function (req, res){
    res.sendFile(__dirname + '/views/graphs.html'); 
