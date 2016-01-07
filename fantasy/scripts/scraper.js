@@ -3,13 +3,7 @@ module.exports = function(req, res){
 	var cheerio = require('cheerio');
 	var jquery = require('jquery');
 	var fs = require('fs');
-
-    var url = 'mongodb://localhost:27017/fantasy';
-    var mongoose = require('mongoose');
     var utils = require('./mongooseutil');
-    mongoose.connect(url);
-    var db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'connection error:'));
 
     var Transaction = mongoose.model('Transaction', utils.schemas.transactionSchema);
     Transaction.find(function(err, transactions) {
@@ -61,8 +55,8 @@ module.exports = function(req, res){
 		for (var i = 0; i < arr.length; i++){
 			var current = arr[i];
 				result.push({
-					"name": current.match(/.*,/)[0].slice(0,-1),
-					"team": current.match(/ \w{2,3} /)[0].trim(),
+					"name": current.match(/.*,/)[0].slice(0,-1).replace(' Jr.', '').replace(' Sr.','').replace('*',''),
+					"team": current.match(/ \w{2,3} /)[0].trim().toUpperCase(),
 					"position": current.match(/(QB|RB|WR|TE|K|D\/ST)/)[0]
 				});
 		}
@@ -130,7 +124,8 @@ module.exports = function(req, res){
         var dateString = dateCell.children().eq(0)["0"].prev.data
         var month = dateString.match(/[A-Z][a-z]{2}/g)[1];
         var day = dateString.match(/\d{1,2}/)[0];
-        var year = 2015;
+        //hacky
+        var year = (month == "Jan" ? 2016 : 2015);
         var time = dateCell.children().eq(0)["0"].next.data
         var date = Date.parse(day + " " + month + " " + year + " " + time);
 

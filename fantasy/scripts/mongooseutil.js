@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
 module.exports = {
+    url: 'mongodb://localhost:27017/fantasy',
     "schemas": {
         "transactionSchema": mongoose.Schema({
             "raw": String,
@@ -21,7 +22,15 @@ module.exports = {
                 team: String,
                 position: String
             }
+        }),
+        userSchema: mongoose.Schema({
+            name: String,
+            abbr: String
+        }),
+        playerSchema: mongoose.Schema({
+            name: String,
+            position: String,
+            team: String,
         })
-        
     }
 }
