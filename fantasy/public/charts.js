@@ -8,7 +8,7 @@
     // instantiates the pie chart, passes in the data and
     // draws it.
     function drawChart() {
-        $.get("/history", function(data){
+        $.get("/transactions", function(data){
                 fillChart(data);
         }
         );
